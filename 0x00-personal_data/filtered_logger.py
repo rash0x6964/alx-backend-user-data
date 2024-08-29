@@ -79,3 +79,30 @@ def get_db() -> MySQLConnection:
         host=db_host,
         database=db_name
     )
+
+
+def main() -> None:
+    """ Connects to the database,
+        retrieves all rows from the users table,
+        and displays each row in a filtered format.
+    """
+    db = get_db()
+    cursor = db.cursor()
+    logger = get_logger()
+
+    try:
+        cursor.execute("SELECT * FROM users;")
+        for row in cursor:
+            message = (
+                f'name={row[0]}; email={row[1]}; phone={row[2]}; '
+                f'ssn={row[3]}; password={row[4]}; ip={row[5]}; '
+                f'last_login={row[6]}; user_agent={row[7]};'
+            )
+            logger.info(message)
+    finally:
+        cursor.close()
+        db.close()
+
+
+if __name__ == "__main__":
+    main()
