@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """ Filtered logger """
 
-from typing import List
+from typing import List, Tuple
 import re
 
 import logging
@@ -37,3 +37,24 @@ def filter_datum(
         lambda x: x.group().split('=')[0] + f'={redaction}',
         message
     )
+
+
+PII_FIELDS: Tuple[str, ...] = ("name", "email", "phone", "ssn", "password")
+
+
+def get_logger() -> logging.Logger:
+    """ Creates and returns a logger that is configured
+        to handle user data logs securely.
+    """
+
+    logger = logging.getLogger("user_data")
+    logger.setLevel(logging.INFO)
+    logger.propagate = False
+
+    stream_handler = logging.StreamHandler()
+    formatter = RedactingFormatter(fields=PII_FIELDS)
+    stream_handler.setFormatter(formatter)
+
+    logger.addHandler(stream_handler)
+
+    return logger
