@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-Route module for the API
+"""Route module for the API
 """
 
 from api.v1.views import app_views
@@ -32,17 +31,20 @@ def not_found(error) -> str:
     """
     return jsonify({"error": "Not found"}), 404
 
+
 @app.errorhandler(401)
 def unauthorized(error) -> str:
     """ unauthorized handler
     """
     return jsonify({"error": "Unauthorized"}), 401
 
+
 @app.errorhandler(403)
 def forbidden(error) -> str:
     """Forbidden handler.
     """
     return jsonify({"error": "Forbidden"}), 403
+
 
 @app.before_request
 def authenticate_user():
