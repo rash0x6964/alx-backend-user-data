@@ -46,10 +46,12 @@ class DB:
     def find_user_by(self, **kwargs) -> User:
         """Finds a user based on arbitrary keyword arguments.
         """
-        try:
-            user = self._session.query(User).filter_by(**kwargs).first()
-            if not user:
-                raise NoResultFound
-            return user
-        except AttributeError:
-            raise InvalidRequestError
+        user_keys = ['id', 'email', 'hashed_password', 'session_id',
+                     'reset_token']
+        for key in kwargs.keys():
+            if key not in user_keys:
+                raise InvalidRequestError
+        result = self._session.query(User).filter_by(**kwargs).first()
+        if result is None:
+            raise NoResultFound
+        return result
