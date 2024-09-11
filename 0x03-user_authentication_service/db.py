@@ -9,6 +9,9 @@ from sqlalchemy.orm.session import Session
 
 from user import Base, User
 
+from sqlalchemy.exc import InvalidRequestError
+from sqlalchemy.orm.exc import NoResultFound
+
 
 class DB:
     """DB class
@@ -39,3 +42,14 @@ class DB:
         self._session.commit()
 
         return new_user
+
+    def find_user_by(self, **kwargs) -> User:
+        """Finds a user based on arbitrary keyword arguments.
+        """
+        try:
+            user = self._session.query(User).filter_by(**kwargs).first()
+            if not user:
+                raise NoResultFound
+            return user
+        except AttributeError:
+            raise InvalidRequestError
